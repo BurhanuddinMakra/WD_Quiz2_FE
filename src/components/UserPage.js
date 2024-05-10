@@ -4,20 +4,37 @@ import { NotificationManager } from "react-notifications";
 import { useDispatch, useSelector } from "react-redux";
 import { setData } from "../redux/app.reducer";
 import Wallet from "./wallet";
-import { AppBar, Box, Grid, IconButton, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Button, Grid, IconButton, Toolbar, Typography } from "@mui/material";
 import FaqPage from "./faqPage";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 const UserPage = () => {
 
+    const navigate = useNavigate();
 
-    const [data, setData] = useState(null)
-    console.log(data);
+
+    // const [data, setData] = useState(null)
     const token = useSelector((state) => state.user.token);
-    // const dispatch = useDispatch();
-    // const data = useSelector((state) => state.app.data);
 
+
+    const redirectToFAQ = () => {   
+        navigate("/faq")
+    };
+
+    const redirectToHome = () => {
+        navigate("/")
+    };
+
+    const logout = () => {
+        navigate("/login")
+    }
+
+    const dispatch = useDispatch();
+    const data = useSelector((state) => state.app.data);
+   
+    console.log(data)
     
 
     useEffect(() => {
@@ -26,16 +43,15 @@ const UserPage = () => {
 
     const getData = async () => {
 
-        console.log('getting data')
+
 
         const response = await axios({
             method: "GET",
             url: "https://sandbox.practical.me/api/user/profile",
             headers: { Authorization: `Bearer ${token}` }
         });
-        console.log("ress"+ response.data);
-        setData(response.data.data);
-        //dispatch(setData(response.data));
+        // setData(response.data.data);
+        dispatch(setData(response.data.data));
 
     };
     
@@ -45,7 +61,7 @@ const UserPage = () => {
 
         <Box>
             <Box sx={{ flexGrow: 1 }}>
-                {/* <AppBar position="static">
+                <AppBar position="static">
                     <Toolbar>
                     <IconButton
                         size="large"
@@ -59,9 +75,11 @@ const UserPage = () => {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         USER PAGE
                     </Typography>
-                    <FaqPage/>
+                    <Button onClick={redirectToHome} color="inherit">Home</Button>
+                    <Button onClick={redirectToFAQ} color="inherit">FAQ</Button>
+                    <Button onClick={logout} color="inherit">Logout</Button>
                     </Toolbar>
-                </AppBar> */}
+                </AppBar>
             </Box>
             <Box>
                 <Box sx={{ textAlign: 'center', fontFamily: 'cursive', marginTop: '20px' }}>
@@ -74,7 +92,7 @@ const UserPage = () => {
             <Grid container>
 
             
-                    {data.wallet.map((r) => (
+                    {data.wallet?.map((r) => (
                         <Grid item xs={12}>
                             <Wallet data={r}/>
                         </Grid>
